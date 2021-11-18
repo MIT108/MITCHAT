@@ -7,7 +7,7 @@
       animated
     >
     <h5> {{Page}} </h5>
-    
+
   <div class="q-pa-md" style="max-width: 400px">
 
     <q-form
@@ -58,7 +58,7 @@ export default {
         Page: String
     },
     data() {
-        return {    
+        return {
           logData: {
             emailUsername: null,
             password: null
@@ -72,7 +72,7 @@ export default {
     },
     methods: {
         onSubmit(){
-          
+
             axios.post(`http://192.168.8.101:8000/api/chatters`,{
               username : "fasdf",
               email: "ok",
@@ -85,11 +85,11 @@ export default {
             .catch(e => {
                 this.errors.push(e)
             });
-              
+
             const $q = useQuasar()
             try {
-              const key = "MITMATUSER"
-              
+              const key = "MITCHATUSER"
+
               LocalStorage.set(key, this.logData)
             } catch (e) {
               console.log(e);
