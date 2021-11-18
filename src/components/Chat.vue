@@ -4,7 +4,7 @@
 
         <div class="q-pa-md row justify-center">
             <div style="width: 100%;">
-                <q-chat-message :name="userName" avatar="https://cdn.quasar.dev/img/avatar3.jpg" :text="['hey, how are you?']" stamp="7 minutes ago" sent bg-color="amber-7" />
+                <q-chat-message :name="userImage" :avatar="`https://cdn.quasar.dev/img/${userImage}`" :text="['hey, how are you?']" stamp="7 minutes ago" sent bg-color="amber-7" />
                 <q-chat-message name="Jane" avatar="https://cdn.quasar.dev/img/avatar5.jpg" :text="[
               'doing fine, how r you?',
               'I just feel like typing a really, really, REALLY long message to annoy you...'
@@ -60,6 +60,8 @@ export default {
     props: {
         userId: String,
         userName: String,
+        userImage: String,
+        userEmail: String,
     },
     created() {},
     components: {

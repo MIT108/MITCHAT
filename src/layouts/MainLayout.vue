@@ -10,7 +10,8 @@
                     MIT-Max Chatting Appication
                 </div>
                 <div v-else>
-                    {{ userName }} Chat
+                    {{ userName }} <br>
+                    <small style = "font-style: italic; font-size: 15px"> {{ userEmail }} </small>
                 </div>
             </q-toolbar-title>
 
@@ -24,7 +25,7 @@
             <EssentialLink v-on:userData="getUserData" />
         </q-list>
     </q-drawer>
-    <Chat :userId="userId" :userName="userName" />
+    <Chat :userId="userId" :userImage="userImage" :userEmail="userEmail" :userName="userName" />
 
 </q-layout>
 </template>
@@ -47,7 +48,9 @@ export default defineComponent({
     data() {
         return {
             userId: null,
-            userName: null
+            userName: null,
+            userEmail: null,
+            userImage: null,
         }
     },
     name: 'MainLayout',
@@ -86,6 +89,8 @@ export default defineComponent({
             console.log(userData)
             this.userName = userData.name
             this.userId = userData.id
+            this.userEmail = userData.email
+            this.userImage = userData.image
             console.log(this.userId)
         }
     },
