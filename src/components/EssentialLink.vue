@@ -8,8 +8,8 @@
     <q-list>
       <q-item-label header>Online</q-item-label>
 
-      <q-item v-for="contact in offline" :key="contact.id" class="q-mb-sm" clickable v-ripple>
-        <q-item-section avatar>
+      <q-item v-for="contact in offline" :key="contact.id" class="q-mb-sm" clickable v-on:click="sendResultValues(contact.id, contact.name,  contact.email, contact.avatar )" v-ripple>
+        <q-item-section avatar >
           <q-avatar>
             <img :src="`https://cdn.quasar.dev/img/${contact.avatar}`">
           </q-avatar>
@@ -25,7 +25,7 @@
         </q-item-section>
       </q-item>
 
-      
+
       <q-separator />
       <q-item-label header>Offline</q-item-label>
 
@@ -80,10 +80,29 @@ const offline = [ {
   id: 6,
   name: 'Winfield Stapforth',
   email: 'wstapforth5@pcworld.com',
-  avatar: 'avatar6.jpg'
+  avatar: 'avatar6.jpg' 
 } ]
 
 export default {
+  data () {
+    return {
+      userData : {
+        id: null,
+        email: null,
+        name: null,
+        image: null
+      }
+    }
+  },
+  methods: {
+    sendResultValues: function (id, name, email, image) {
+      this.userData.id = id
+      this.userData.email = email
+      this.userData.name = name
+      this.userData.image = image
+        this.$emit('userData', this.userData);
+    }
+  },
   setup () {
     return {
       contacts,
