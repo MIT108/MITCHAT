@@ -4,19 +4,28 @@
 
         <div class="q-pa-md row justify-center">
             <div style="width: 100%;">
-                <q-chat-message :name="userImage" :avatar="`https://cdn.quasar.dev/img/${userImage}`" :text="['hey, how are you?']" stamp="7 minutes ago" sent bg-color="amber-7" />
-                <q-chat-message name="Jane" avatar="https://cdn.quasar.dev/img/avatar5.jpg" :text="[
-              'doing fine, how r you?',
-              'I just feel like typing a really, really, REALLY long message to annoy you...'
-            ]" size="6" stamp="4 minutes ago" text-color="white" bg-color="primary" />
+
+                <q-infinite-scroll @load="onLoad" reverse>
+                    <template v-slot:loading>
+                        <div class="row justify-center q-my-md">
+                            <q-spinner color="primary" name="dots" size="40px" />
+                        </div>
+                    </template>
+                    <!--
                 <q-chat-message name="Jane" avatar="https://cdn.quasar.dev/img/avatar5.jpg" :text="['Did it work?']" stamp="1 minutes ago" size="8" text-color="white" bg-color="primary" />
+-->
+
+                    <div v-for="(item, index) in items" :key="index" class="caption q-py-sm">
+                        <q-chat-message :name="messageName(items.length - index)" :label="checkDate(items.length - index)" avatar='/images/defaultUser.png' :sent="checkSender(items.length - index)" :text="['doing fine, how r you?','I REALLY long messageI just feel like typing a really, reg a really, really, REALLY long messageI just feel like typing a really, reall ty a realan']" stamp="4 minutes ago" text-color="white" :bg-color="messageColor(items.length - index)" /> <img :src="`https://cdn.quasar.dev/img/${userImage}`" alt="" srcset="">
+                    </div>
+                </q-infinite-scroll>
             </div>
             <q-footer elevated>
                 <q-toolbar>
-                    <q-input bg-color="white" class="full-width" outlined rounded label="message" dense>
+                    <q-input bg-color="white" class="full-width" outlined rounded label="message" v-model.trim="msg" dense>
 
                         <template v-slot:after>
-                            <q-btn round dense flat color="white" icon="send" />
+                            <q-btn round dense flat color="white" v-on:click="saveMessage()" icon="send" />
                         </template>
                     </q-input>
                 </q-toolbar>
@@ -48,24 +57,121 @@ import {
     ref
 } from "vue";
 import EssentialLink from "./EssentialLink.vue";
+import axios from 'axios';
 
 export default {
+  data () {
+    return {
+            URL: "https://7a10-154-72-150-96.ngrok.io/api",
+    }
+  },
     setup() {
+      const items = ref([])
+
         return {
-            basic: ref(false),
-            fixed: ref(false),
+            // items,
+            // onLoad(index, done) {
+            //   var data
+            //     axios
+            //         .get("https://7a10-154-72-150-96.ngrok.io/api/collect_message/1/2")
+            //         .then(response => {
+            //           // this.message = response.data
+            //           console.log(response.data);
+            //           data = response.data
+            //             // this.userList = JSON.stringify(this.userList)
+            //         })
+            //         .catch(error => {
+            //             console.log(error);
+            //             // this.errored = true
+            //         })
+            //     .finally(() => done())
+            //     setTimeout(() => {
+            //         items.value.splice(data)
+            //         done()
+            //     }, 2000)
+            // },
+            // msg: "",
+
+            // basic: ref(false),
+            // fixed: ref(false),
         };
     },
-    methods: {},
+    methods: {
+        messageName(sender) {
+            if (sender % 2 != 0) {
+                return "me"
+            } else {
+                return this.userName
+            }
+            return "miendjem"
+        },
+        checkDate(time) {
+            if (time % 7 != 0) {
+                return null
+            } else {
+                return time
+            }
+        },
+        checkSender(sender) {
+            if (sender % 2 != 0) {
+                return true
+            } else {
+                return false
+            }
+
+        },
+        messageColor(sender) {
+            if (sender % 2 != 0) {
+                return "primary"
+            } else {
+                return
+            }
+        },
+        saveMessage() {
+            if (this.msg == "") {
+                alert("enter message")
+
+            } else {
+                axios.post(this.URL +"/message", {
+                        sender_id: '1',
+                        receiver_id: this.userId,
+                        message: 'good'
+                    })
+                    .then(response => {
+                        // JSON responses are automatically parsed
+                        console.log(response);
+                    })
+                    .catch(e => {
+                        this.errors.push(e)
+                    });
+            }
+
+        }
+    },
     props: {
         userId: String,
         userName: String,
         userImage: String,
         userEmail: String,
     },
-    created() {},
+    created() {
+        console.log("ok");
+      
+        axios
+            .get("https://7a10-154-72-150-96.ngrok.io/api/collect_message/1/2")
+            .then(response => {
+              // this.message = response.data
+              console.log(response.data);
+                // this.userList = JSON.stringify(this.userList)
+            })
+            .catch(error => {
+                console.log(error);
+                // this.errored = true
+            })
+
+    },
     components: {
-        EssentialLink
+        EssentialLink,
     },
 };
 </script>

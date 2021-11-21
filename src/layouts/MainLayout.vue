@@ -10,8 +10,7 @@
                     MIT-Max Chatting Appication
                 </div>
                 <div v-else>
-                    {{ userName }} <br>
-                    <small style = "font-style: italic; font-size: 15px"> {{ userEmail }} </small>
+                    {{ userName }}
                 </div>
             </q-toolbar-title>
 

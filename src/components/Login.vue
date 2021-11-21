@@ -46,10 +46,12 @@
 
 
 <script>
-import { ref } from 'vue'
+import { ref , defineAsyncComponent } from 'vue'
 import { useQuasar } from 'quasar'
 import { LocalStorage, SessionStorage } from 'quasar'
 import axios from 'axios';
+
+const AsyncComp = defineAsyncComponent(()=> import("./Chat"))
 
 
 
