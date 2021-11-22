@@ -16,7 +16,7 @@
     >
       <q-input
         filled
-        v-model="logData.emailUsername"
+        v-model="email"
         label="Enter Login*"
         hint="Username or email"
         lazy-rules
@@ -26,7 +26,7 @@
       <q-input
         filled
         type="password"
-        v-model="logData.password"
+        v-model="password"
         label="Your Passord *"
         lazy-rules
         :rules="[ val => val && val.length > 0 || 'Please type something']"
@@ -50,6 +50,9 @@ import { ref , defineAsyncComponent } from 'vue'
 import { useQuasar } from 'quasar'
 import { LocalStorage, SessionStorage } from 'quasar'
 import axios from 'axios';
+import { mapActions, mapMutations } from 'vuex';
+import { LOADING_SPINNER_SHOW_MUTATION, LOGIN_ACTION } from 'src/store/storeConstants';
+import { logigAction } from 'src/store/module-auth/actions';
 
 const AsyncComp = defineAsyncComponent(()=> import("./Chat"))
 
@@ -61,41 +64,56 @@ export default {
     },
     data() {
         return {
-          logData: {
-            emailUsername: null,
-            password: null
-          }
+            email: null,
+            password: null,
+            serverError: null
         }
     },
     setup () {
-        return {
-        step: ref(1)
-        }
-    },
+    const $q = useQuasar()
+
+    return {
+      
+      step: ref(1),
+      showNotifs (position, color, type, message) {
+        $q.notify({
+          progress: true,
+          message: message,
+          color: color,
+          type: type,
+          multiLine: true,
+          position: position,
+          avatar: 'https://cdn.quasar.dev/img/boy-avatar.png',
+          actions: [
+            { color: 'yellow', handler: () => { /* ... */ } }
+          ]
+        })
+      }
+    }
+  },
     methods: {
-        onSubmit(){
 
-            axios.post(`http://192.168.8.101:8000/api/chatters`,{
-              username : "fasdf",
-              email: "ok",
-              password: "okk"
-            })
-            .then(response => {
-                // JSON responses are automatically parsed
-                console.log(response);
-            })
-            .catch(e => {
-                this.errors.push(e)
-            });
-
-            const $q = useQuasar()
-            try {
-              const key = "MITCHATUSER"
-
-              LocalStorage.set(key, this.logData)
-            } catch (e) {
-              console.log(e);
-            }
+      ...mapActions('auth', {
+        login: logigAction
+      }),
+      ...mapMutations({
+        showLoading:LOADING_SPINNER_SHOW_MUTATION
+      }),
+        async onSubmit(){
+          this.showLoading(true);
+          try {
+            // await this.$store.dispatch(logigAction)
+            await this.login({email: this.email, password: this.password});
+            this.showLoading(false);
+            this.showNotifs('bottom-right','green','positive',this.serverError);
+            this.$router.push("/Chat");
+          } catch (error) {
+            console.log(error);
+            console.log(this.$apiResponse(error));
+            this.serverError = this.$apiResponse(error)
+            this.showLoading(false);
+            this.showNotifs('bottom-right','negative','negative',this.serverError);
+          }
         }
     },
 }

@@ -1,7 +1,8 @@
 import { store } from 'quasar/wrappers'
 import { createStore } from 'vuex'
 
-// import example from './module-example'
+import auth from './module-auth/index'
+import { LOADING_SPINNER_SHOW_MUTATION } from './storeConstants'
 
 /*
  * If not building with SSR mode, you can
@@ -12,16 +13,24 @@ import { createStore } from 'vuex'
  * with the Store instance.
  */
 
-export default store(function (/* { ssrContext } */) {
-  const Store = createStore({
-    modules: {
-      // example
-    },
+export default store(function( /* { ssrContext } */ ) {
+    const Store = createStore({
+        modules: {
+            auth
+        },
+        state: {
+            showLoading: false,
+        },
+        mutations: {
+            [LOADING_SPINNER_SHOW_MUTATION](state, payload) {
+                state.showLoading = payload;
+            }
+        },
 
-    // enable strict mode (adds overhead!)
-    // for dev mode and --debug builds only
-    strict: process.env.DEBUGGING
-  })
+        // enable strict mode (adds overhead!)
+        // for dev mode and --debug builds only
+        strict: process.env.DEBUGGING
+    })
 
-  return Store
+    return Store
 })
