@@ -90,12 +90,13 @@
       </q-form>
     </q-stepper>
 
-  </div>
+</div>
 </template>
 
-
 <script>
-import { ref } from 'vue'
+import {
+    ref
+} from 'vue'
 import axios from 'axios';
 import { useQuasar } from 'quasar'
 import { signUpAction } from 'src/store/module-auth/actions';

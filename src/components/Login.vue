@@ -46,13 +46,15 @@
 
 
 <script>
-import { ref } from 'vue'
+import { ref , defineAsyncComponent } from 'vue'
 import { useQuasar } from 'quasar'
 import { LocalStorage, SessionStorage } from 'quasar'
 import axios from 'axios';
 import { mapActions, mapMutations } from 'vuex';
 import { LOADING_SPINNER_SHOW_MUTATION, LOGIN_ACTION } from 'src/store/storeConstants';
 import { logigAction } from 'src/store/module-auth/actions';
+
+const AsyncComp = defineAsyncComponent(()=> import("./Chat"))
 
 
 

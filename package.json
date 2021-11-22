@@ -6,16 +6,17 @@
     "author": "MIT108",
     "private": true,
     "scripts": {
-        "dev": "quasar dev",
         "lint": "eslint --ext .js,.vue ./",
         "test": "echo \"No test specified\" && exit 0"
     },
     "dependencies": {
+        "-": "0.0.1",
         "@quasar/extras": "^1.0.0",
-        "@smartweb/vue-flash-message": "^0.6.10",
         "axios": "^0.21.1",
         "core-js": "^3.6.5",
+        "dotenv": "^10.0.0",
         "quasar": "^2.0.0",
+        "save-dev": "0.0.1-security",
         "vuex": "^4.0.1"
     },
     "devDependencies": {
@@ -24,8 +25,7 @@
         "eslint": "^7.14.0",
         "eslint-config-prettier": "^8.1.0",
         "eslint-plugin-vue": "^7.0.0",
-        "eslint-webpack-plugin": "^2.4.0",
-        "vue-particles": "^1.0.9"
+        "eslint-webpack-plugin": "^2.4.0"
     },
     "browserslist": [
         "last 10 Chrome versions",
