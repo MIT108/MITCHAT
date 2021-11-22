@@ -60,6 +60,11 @@ import axios from "axios";
 // const Load = defineAsyncComponent(()=> import('../components/Loading'))
 
 export default {
+    computed: {
+        api_url () {
+          return process.env.chatapp.API_URL
+        }
+    },
     data() {
         return {
             userData: {
@@ -84,14 +89,10 @@ export default {
         },
     },
     setup() {
-      return {
-
-            URL: "https://7a10-154-72-150-96.ngrok.io/api",
-      }
     },
     async mounted() {
         await axios
-            .get(this.URL+"/list")
+            .get(process.env.chatapp.API_URL + "list")
             .then(response => {
                 this.userList = response.data;
                 // this.userList = JSON.stringify(this.userList)
