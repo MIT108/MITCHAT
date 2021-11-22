@@ -11,7 +11,8 @@
   <div class="q-pa-md">
     <q-btn no-caps color="purple" @click="showNotifs('top', 'red', 'danger')" label="Show timeout progress" />
   </div>
-    
+      <!-- <flash-message :error="serverError" /> -->
+
     <q-form
       @submit.prevent="onSubmit"
       class="q-gutter-md"
@@ -25,7 +26,7 @@
 
       <q-input
         filled
-        v-model="username"
+        v-model="userName"
         label="Your username *"
         hint="username"
         lazy-rules
@@ -97,10 +98,17 @@
 import { ref } from 'vue'
 import axios from 'axios';
 import { useQuasar } from 'quasar'
+import { signUpAction } from 'src/store/module-auth/actions';
+import { mapActions, mapMutations } from 'vuex';
+import { LOADING_SPINNER_SHOW_MUTATION, LOGIN_ACTION } from 'src/store/storeConstants';
+// import FlashMessage from './FlashMessage.vue';
 
 
 
 export default {
+    components:{
+      // FlashMessage
+    },
     computed: {
     },
     props: {
@@ -108,10 +116,11 @@ export default {
     },
     data() {
         return {
-            username: null,
+            userName: null,
             email: null,
             password: null,
             passwordConfirm: null,
+            serverError: null
         
         }
     },
@@ -121,7 +130,7 @@ export default {
     return {
       
       step: ref(1),
-      showNotifs (position, type, message) {
+      showNotifs (position, color, type, message) {
         $q.notify({
           progress: true,
           message: message,
@@ -130,28 +139,33 @@ export default {
           position: position,
           avatar: 'https://cdn.quasar.dev/img/boy-avatar.png',
           actions: [
-            { label: 'Reply', color: 'yellow', handler: () => { /* ... */ } }
+            { color: 'yellow', handler: () => { /* ... */ } }
           ]
         })
       }
     }
   },
   methods: {
-      onSubmit(){
-          console.log(this.username)
-        
-            axios.post(`http://192.168.8.101:8000/api/chatters`,{
-              username : this.username,
-              email: this.email,
-              password: this.password
-            })
-            .then(response => {
-                // JSON responses are automatically parsed
-                console.log(response);
-            })
-            .catch(e => {
-                this.errors.push(e)
-            });
+    ...mapActions('auth',{
+        signUp: signUpAction
+    }),
+    ...mapMutations({
+      showLoading:LOADING_SPINNER_SHOW_MUTATION
+    }),
+      async onSubmit(){
+        this.showLoading(true);
+        try {
+            await this.signUp({email: this.email, password: this.password, userName:this.userName})
+             this.showNotifs('bottom-right','green','positive',this.serverError);
+            this.showLoading(false);
+            this.$router.push("/Chat");
+        } catch (error) {
+          console.log(error);
+          console.log(this.$apiResponse(error));
+          this.serverError = this.$apiResponse(error)
+          this.showLoading(false);
+          this.showNotifs('bottom-right','negative','negative',this.serverError);
+        }
       }
   },
 }
