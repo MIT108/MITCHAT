@@ -4,6 +4,6 @@
     "env_production": ".production.env",
     "common_root_object": "chatapp",
     "create_env_files": true,
-    "add_env_to_gitignore": true
+    "add_env_to_gitignore": false
   }
 }

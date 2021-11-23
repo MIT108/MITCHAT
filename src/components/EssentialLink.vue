@@ -4,7 +4,7 @@
         <q-toolbar-title>Contacts</q-toolbar-title>
     </q-toolbar>
 
-    <q-list>
+    <q-list v-if="userListLoading">
         <q-item-label header v-on:click="display()">Online</q-item-label>
         <div v-for="user in userList" :key="user.id">
             <q-item v-if="user.status == 1" class="q-mb-sm" clickable v-on:click="sendResultValues(user.id, user.username,  user.email, user.email )" v-ripple>
@@ -51,19 +51,36 @@
 
         </div>
     </q-list>
+    <div v-else>
+        <center>
+            <h6>Searching for users</h6>
+            <spinner />
+        </center>
+    </div>
 </div>
 </template>
 
 <script>
+import spinner from '../components/Spinner.vue'
 import axios from "axios";
+import {
+    useQuasar
+} from "quasar";
+import {
+    onBeforeUnmount
+} from "vue";
+import Echo from 'laravel-echo';
 // import defineAsyncComponent from 'quasar'
 // const Load = defineAsyncComponent(()=> import('../components/Loading'))
 
 export default {
+    components: {
+        spinner
+    },
     computed: {
-        api_url () {
-          return process.env.chatapp.API_URL
-        }
+        api_url() {
+            return process.env.chatapp.API_URL;
+        },
     },
     data() {
         return {
@@ -74,6 +91,7 @@ export default {
                 image: null,
             },
             userList: null,
+            userListLoading: false,
         };
     },
     methods: {
@@ -88,14 +106,19 @@ export default {
             console.log(this.userList);
         },
     },
-    setup() {
-    },
+    setup() {},
     async mounted() {
+        const $q = useQuasar();
+        Echo.private(`messages${1}`)
+        .listen()
+
         await axios
             .get(process.env.chatapp.API_URL + "list")
             .then(response => {
+                $q.loading.hide();
                 this.userList = response.data;
                 // this.userList = JSON.stringify(this.userList)
+                this.userListLoading = true;
             })
             .catch(error => {
                 console.log(error);
