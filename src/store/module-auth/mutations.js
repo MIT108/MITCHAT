@@ -1,10 +1,9 @@
 import { SET_USER_TOKEN_DATA_MUTATION } from "../storeConstants";
-
-
-export const
-    setUserData = (state, payload) => {
+export default {
+    [SET_USER_TOKEN_DATA_MUTATION](state, payload) {
         state.email = payload.email;
         state.name = payload.name;
-        state.token = payload.token;
+        state.access_token = payload.access_token;
         state.user_id = payload.user_id;
     }
+};
