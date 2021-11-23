@@ -1,32 +1,32 @@
 <template>
-<Auth />
-<q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-        <q-toolbar>
-            <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+    <Auth />
+    <q-layout view="lHh Lpr lFf">
+        <q-header elevated>
+            <q-toolbar>
+                <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
-            <q-toolbar-title>
-                <div v-if="userName == null">
-                    MIT-Max Chatting Appication
-                </div>
-                <div v-else>
-                    {{ userName }}
-                </div>
-            </q-toolbar-title>
+                <q-toolbar-title>
+                    <div v-if="userName == null">
+                        MIT-Max Chatting Appication
+                    </div>
+                    <div v-else>
+                        {{ userName }}
+                    </div>
+                </q-toolbar-title>
 
-            <q-btn flat dense round icon="logout" aria-label="logout" @click="logout" />
+                <q-btn flat dense round icon="logout" aria-label="logout" @click="logout" />
 
-        </q-toolbar>
-    </q-header>
+            </q-toolbar>
+        </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-        <q-list>
-            <EssentialLink v-on:userData="getUserData" />
-        </q-list>
-    </q-drawer>
-    <Chat :userId="userId" :userImage="userImage" :userEmail="userEmail" :userName="userName" />
+        <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+            <q-list>
+                <EssentialLink v-on:userData="getUserData" />
+            </q-list>
+        </q-drawer>
+        <Chat :userId="userId" :userImage="userImage" :userEmail="userEmail" :userName="userName" />
 
-</q-layout>
+    </q-layout>
 </template>
 
 <script>
@@ -64,8 +64,7 @@ export default defineComponent({
 
     mounted() {
 
-        let value = LocalStorage.getItem("MITMATUSER")
-        console.log(value)
+        console.log(this.userName);
         // if (value == "null") {
         //     console.log("pl")
         //     window.location.href = "/"
@@ -84,7 +83,7 @@ export default defineComponent({
             this.signOut
         },
         //get user data
-        getUserData: function (userData) {
+        getUserData: function(userData) {
             console.log(userData)
             this.userName = userData.name
             this.userId = userData.id

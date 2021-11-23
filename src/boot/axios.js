@@ -10,7 +10,7 @@ import store from 'src/store/index'
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({
-    baseURL: 'http://127.0.0.1:8000/api/v1/user',
+    baseURL: process.env.chatapp.API_URL,
     headers: {
         Accept: 'application/json'
     }
@@ -36,3 +36,14 @@ export default boot(({ app, store }) => {
 })
 
 export { axios, api }
+
+import Echo from 'laravel-echo'
+
+window.Pusher = require('pusher-js')
+
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: process.env.chatapp.MIX_PUSHER_APP_KEY,
+    cluster: process.env.chat.app.MIX_PUSHER_APP_CLUSTER,
+    encrypted: true
+})
