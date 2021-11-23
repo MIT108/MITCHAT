@@ -1,7 +1,7 @@
 export default function() {
     return {
         name: '',
-        token: '',
+        access_token: '',
         user_id: '',
         email: '',
     }

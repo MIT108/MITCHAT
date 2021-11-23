@@ -101,7 +101,7 @@ import axios from 'axios';
 import { useQuasar } from 'quasar'
 import { signUpAction } from 'src/store/module-auth/actions';
 import { mapActions, mapMutations } from 'vuex';
-import { LOADING_SPINNER_SHOW_MUTATION, LOGIN_ACTION } from 'src/store/storeConstants';
+import { LOADING_SPINNER_SHOW_MUTATION, LOGIN_ACTION, SIGNUP_ACTION } from 'src/store/storeConstants';
 // import FlashMessage from './FlashMessage.vue';
 
 
@@ -148,7 +148,7 @@ export default {
   },
   methods: {
     ...mapActions('auth',{
-        signUp: signUpAction
+        signUp: SIGNUP_ACTION
     }),
     ...mapMutations({
       showLoading:LOADING_SPINNER_SHOW_MUTATION
