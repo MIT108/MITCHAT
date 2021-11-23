@@ -42,6 +42,8 @@ import {
     LocalStorage,
     SessionStorage
 } from 'quasar'
+import { mapActions } from 'vuex'
+import { LOGOUT_ACTION } from 'src/store/storeConstants'
 
 export default defineComponent({
     data() {
@@ -74,13 +76,11 @@ export default defineComponent({
 
     },
     methods: {
+        ...mapActions('auth',{
+            signOut:LOGOUT_ACTION
+        }),
         logout() {
-
-            const key = "MITMATUSER"
-
-            LocalStorage.set(key, "null")
-
-            window.location.href = "/"
+            this.signOut
         },
         //get user data
         getUserData: function(userData) {

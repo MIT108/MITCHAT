@@ -94,7 +94,7 @@ export default {
     methods: {
 
       ...mapActions('auth', {
-        login: logigAction
+        login: LOGIN_ACTION
       }),
       ...mapMutations({
         showLoading:LOADING_SPINNER_SHOW_MUTATION

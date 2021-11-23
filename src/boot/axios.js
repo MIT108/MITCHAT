@@ -1,5 +1,7 @@
 import { boot } from 'quasar/wrappers'
-import axios from 'axios'
+import axios from 'axios';
+import { GET_USER_TOKEN_GETTER } from 'src/store/storeConstants';
+import store from 'src/store/index'
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -14,7 +16,14 @@ const api = axios.create({
     }
 })
 
-export default boot(({ app }) => {
+export default boot(({ app, store }) => {
+    api.interceptors.request.use((config) => {
+        const token = store.getters[`auth/${GET_USER_TOKEN_GETTER}`];
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    });
     // for use inside Vue files (Options API) through this.$axios and this.$api
 
     app.config.globalProperties.$axios = axios
