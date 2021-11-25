@@ -43,7 +43,7 @@ window.Pusher = require('pusher-js')
 
 window.Echo = new Echo({
     broadcaster: 'pusher',
-    key: process.env.chatapp.MIX_PUSHER_APP_KEY,
-    cluster: process.env.chat.app.MIX_PUSHER_APP_CLUSTER,
+    key: "cce61bed1cd09ff5e1a3",
+    cluster: "eu",
     encrypted: true
 })
