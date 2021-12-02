@@ -37,7 +37,7 @@ export default {
                 localStorage.setItem('userData', JSON.stringify(userData));
                 context.commit(SET_USER_TOKEN_DATA_MUTATION, userData);
             }).catch((error) => {
-                console.log(error);
+                console.log(error.response);
                 throw error;
             });
     },
@@ -50,7 +50,7 @@ export default {
     async [SIGNUP_ACTION](context, payload) {
         return context.dispatch(AUTH_ACTION, {
             ...payload,
-            url: '/register'
+            url: 'user/register'
         });
     }
 }

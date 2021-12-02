@@ -10,7 +10,7 @@ import store from 'src/store/index'
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({
-    baseURL: process.env.chatapp.API_URL,
+    baseURL: '127.0.0.1:8000/api/v1/',
     headers: {
         Accept: 'application/json'
     }
