@@ -1,110 +1,107 @@
 <template>
-    <Auth />
-    <q-layout view="lHh Lpr lFf">
-        <q-header elevated>
-            <q-toolbar>
-                <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+  <Auth />
+  <q-layout view="lHh Lpr lFf">
+    <q-header elevated>
+      <q-toolbar>
+        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
-                <q-toolbar-title>
-                    <div v-if="userName == null">
-                        MIT-Max Chatting Appication
-                    </div>
-                    <div v-else>
-                        {{ userName }}
-                    </div>
-                </q-toolbar-title>
+        <q-toolbar-title>
+          <div v-if="userName == null">MIT-Max Chatting Appication</div>
+          <div v-else>
+            {{ userName }}
+          </div>
+        </q-toolbar-title>
+        {{ userId }}
+        <q-btn flat dense round icon="logout" aria-label="logout" @click="logout" />
+      </q-toolbar>
+    </q-header>
 
-                <q-btn flat dense round icon="logout" aria-label="logout" @click="logout" />
-
-            </q-toolbar>
-        </q-header>
-
-        <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-            <q-list>
-                <EssentialLink v-on:userData="getUserData" />
-            </q-list>
-        </q-drawer>
-        <Chat :userId="userId" :userImage="userImage" :userEmail="userEmail" :userName="userName" />
-
-    </q-layout>
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+      <q-list>
+        <EssentialLink v-on:userData="getUserData" :newMessage="newMessage" />
+      </q-list>
+    </q-drawer>
+    <Chat
+      v-on:newMessage="getNewMessage"
+      :userId="userId"
+      :userImage="userImage"
+      :userEmail="userEmail"
+      :userName="userName"
+      :index="index"
+    />
+  </q-layout>
 </template>
 
 <script>
-import EssentialLink from 'components/EssentialLink.vue'
-import Auth from 'components/Auth.vue'
-import Chat from 'components/Chat.vue'
+import EssentialLink from "components/EssentialLink.vue";
+import Auth from "components/Auth.vue";
+import Chat from "components/Chat.vue";
+import { USER_DATA_GETTER } from "../store/storeConstants";
 
-import {
-    defineComponent,
-    ref
-} from 'vue'
-import {
-    LocalStorage,
-    SessionStorage
-} from 'quasar'
-import { mapActions } from 'vuex'
-import { LOGOUT_ACTION,USER_INFORMATION } from 'src/store/storeConstants'
+import { defineComponent, ref } from "vue";
+import { mapActions } from "vuex";
+import { LOGOUT_ACTION } from "src/store/storeConstants";
 
 export default defineComponent({
-    data() {
-        return {
-            userId: null,
-            userName: null,
-            userEmail: null,
-            userImage: null,
-            userInfo:[]
-        }
+  data() {
+    return {
+      userId: null,
+      userName: null,
+      userEmail: null,
+      userImage: null,
+      index: null,
+      user: [],
+      newMessage: null,
+    };
+  },
+  name: "MainLayout",
+
+  components: {
+    Auth,
+    EssentialLink,
+    Chat,
+  },
+
+  mounted() {
+    console.log(this.userName);
+
+    //getting user data
+    this.user = this.$store.getters[`auth/${USER_DATA_GETTER}`]
+    console.log(this.user)
+  },
+
+  setup() {},
+  methods: {
+    ...mapActions("auth", {
+      signOut: LOGOUT_ACTION,
+    }),
+    logout() {
+      this.signOut;
     },
-    name: 'MainLayout',
-
-    components: {
-        Auth,
-        EssentialLink,
-        Chat
+    //get user data
+    getUserData: function (userData) {
+      console.log(userData);
+      this.userName = userData.name;
+      this.index = userData.index;
+      this.userId = userData.id;
+      this.userEmail = userData.email;
+      this.userImage = userData.image;
+      console.log(this.userId);
     },
-
-    mounted() {
-        this.userInfo = this.$store.getters[`auth/${USER_INFORMATION}`];
-        this.userName = this.userInfo[0];
-        this.userId = this.userInfo[1];
-        console.log(this.userInfo,this.userName,this.userId);
-        // if (value == "null") {
-        //     console.log("pl")
-        //     window.location.href = "/"
-        // }
-
-    },
-
-    setup() {
-
-    },
-    methods: {
-        ...mapActions('auth',{
-            signOut:LOGOUT_ACTION
-        }),
-        logout() {
-            this.signOut
-        },
-        //get user data
-        getUserData: function(userData) {
-            console.log(userData)
-            this.userName = userData.name
-            this.userId = userData.id
-            this.userEmail = userData.email
-            this.userImage = userData.image
-            console.log(this.userId)
-        }
-    },
-    setup() {
-        const leftDrawerOpen = ref(false)
-
-        return {
-            // essentialLinks: linksList,
-            leftDrawerOpen,
-            toggleLeftDrawer() {
-                leftDrawerOpen.value = !leftDrawerOpen.value
-            }
-        }
+    getNewMessage: function (newMessage){
+      this.newMessage = newMessage
     }
-})
+  },
+  setup() {
+    const leftDrawerOpen = ref(false);
+
+    return {
+      // essentialLinks: linksList,
+      leftDrawerOpen,
+      toggleLeftDrawer() {
+        leftDrawerOpen.value = !leftDrawerOpen.value;
+      },
+    };
+  },
+});
 </script>

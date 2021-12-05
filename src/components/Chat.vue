@@ -4,7 +4,6 @@
 
         <div class="q-pa-md row justify-center">
             <div style="width: 100%;">
-
                 <!--
                 <q-chat-message name="Jane" avatar="https://cdn.quasar.dev/img/avatar5.jpg" :text="['Did it work?']" stamp="1 minutes ago" size="8" text-color="white" bg-color="primary" />
 -->
@@ -20,7 +19,14 @@
                     </div>
                     <div v-else ref="feed" id="feed">
                         <div v-for="msg in messages" :key="msg.id" class="caption q-py-sm">
-                            <q-chat-message :name="msg.username" :label="msg.created_at" avatar='/images/defaultUser.png' :sent="checkSender(msg.sender_id)" :text="[msg.message]" :stamp="sendTime(msg.created_at)" text-color="white" :bg-color="messageColor(msg.sender_id)" /> <img alt="" srcset="">
+
+                            <q-chat-message push :name="msg.username" :label="checkDate(msg.created_at)" avatar='/images/defaultUser.png' :sent="checkSender(msg.sender_id)" :text="[msg.message]" :stamp="sendTime(msg.created_at)" text-color="white" :bg-color="messageColor(msg.sender_id)" /> <img alt="" srcset="">
+
+                            <q-popup-proxy>
+                                <q-banner>
+                                    You have lost connection to the internet. This app is offline.
+                                </q-banner>
+                            </q-popup-proxy>
                         </div>
                     </div>
                 </div>
@@ -63,26 +69,27 @@
 </template>
 
 <script>
-import {
-    ref
-} from "vue";
 import EssentialLink from "./EssentialLink.vue";
 import spinner from "./Spinner.vue";
 import axios from 'axios';
 import {
     date
 } from 'quasar'
-import Vue from "vue"
-
+import {
+    USER_DATA_GETTER
+} from 'src/store/storeConstants';
+import Vue from 'vue'
 export default {
     watch: {
         userId: function (va) {
+            this.user = this.$store.getters[`auth/${USER_DATA_GETTER}`]
+
             this.messageLoad = false
             axios
-                .get(process.env.chatapp.API_URL + "collect_message/" + this.userId + "/1")
+                .get(process.env.chatapp.API_URL + "collect_message/" + this.userId + "/" + this.user[0])
                 .then(response => {
                     this.messages = response.data
-            this.scrollToBottom()
+                    // this.scrollToBottom()
                     this.messageLoad = true
                 })
                 .catch(error => {
@@ -90,7 +97,7 @@ export default {
                 })
         },
         messages: function () {
-            this.scrollToBottom()
+            // this.scrollToBottom()
 
         }
 
@@ -100,27 +107,56 @@ export default {
             message: "",
             messages: [],
             messagesExist: false,
-            messageLoad: false
+            messageLoad: false,
+            user: [],
+            currentDate: null
         }
     },
     methods: {
-        loadMessage() {
-            console.log("meidnjem");
-        },
+        loadMessage() {},
         messageName(sender) {
             if (sender % 2 != 0) {
                 return "me"
             } else {
                 return this.userName
             }
-            return "miendjem"
         },
         checkDate(time) {
-            if (time % 7 != 0) {
-                return null
+            time = time.substr(0, 10);
+            var n = time
+            var now = new Date().toISOString().substr(0, 10)
+            var yesterday
+
+            time = date.formatDate(time.substr(0, 10), 'X')
+
+            now = date.formatDate(now, 'X')
+            yesterday = now - 86400
+
+            var dates
+            if (now == time) {
+                dates = "today"
+
+                if (dates == this.currentDate) {
+                    return
+                }
+                this.currentDate = dates
+            } else if (yesterday == time) {
+                dates = "yesterday"
+
+                if (dates == this.currentDate) {
+                    return
+                }
+                this.currentDate = dates
             } else {
-                return time
+                dates = this.getMonth(n.substr(5, 2)) + " " + n.substr(8, 2) + ", " + n.substr(0, 4);
+
+                if (dates == this.currentDate) {
+                    return
+                }
+                this.currentDate = dates
             }
+
+            return dates
         },
         sendTime(time) {
             time = date.formatDate(time, 'X')
@@ -177,6 +213,7 @@ export default {
                 alert("enter message")
 
             } else {
+
                 axios.post(process.env.chatapp.API_URL + "message", {
                         sender_id: this.userId,
                         receiver_id: '1',
@@ -186,20 +223,53 @@ export default {
                         // JSON responses are automatically parsed
                         this.messages.push(response.data[0])
                         this.message = ""
-                        console.log(this.messages);
                     })
+
+                var newMessage = [this.index, this.message]
+                this.$emit("newMessage", newMessage)
             }
 
         },
-        scrollToBottom() {
-            setTimeout(() => {
-                var container = this.$el.querySelector("#feed");
-                container.scrollTop = container.scrollHeight;
-                console.log(this.$refs.feed.scrollHeight);
-                console.log(this.$refs.feed.clientHeight);
-                console.log(this.$refs.feed.scrollTop);
-                this.$refs.feed.scrollTop = this.$refs.feed.scrollHeight - this.$refs.feed.clientHeight;
-            }, 50)
+        getMonth(m) {
+            console.log(m);
+            switch (m) {
+                case "01":
+                    return "Jan"
+                    break;
+                case "02":
+                    return "Feb"
+                    break;
+                case "03":
+                    return "May"
+                    break;
+                case "04":
+                    return "Apr"
+                    break;
+                case "05":
+                    return "Mar"
+                    break;
+                case "06":
+                    return "Jun"
+                    break;
+                case "07":
+                    return "Jul"
+                    break;
+                case "08":
+                    return "Aug"
+                    break;
+                case "09":
+                    return "Sep"
+                    break;
+                case "10":
+                    return "Oct"
+                    break;
+                case "11":
+                    return "Nov"
+                    break;
+                case "12":
+                    return "Dec"
+                    break;
+            }
         }
     },
     props: {
@@ -207,10 +277,9 @@ export default {
         userName: String,
         userImage: String,
         userEmail: String,
+        index: String,
     },
-    created() {
-        this.loadMessage()
-    },
+    created() {},
     components: {
         EssentialLink,
         spinner
