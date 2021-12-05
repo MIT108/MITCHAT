@@ -7,7 +7,7 @@
       animated
     >
     <h5> {{Page}} </h5>
-    
+
   <div class="q-pa-md">
     <q-btn no-caps color="purple" @click="showNotifs('top', 'red', 'danger')" label="Show timeout progress" />
   </div>
@@ -46,7 +46,7 @@
         icon="create_new_folder"
         :done="step > 2"
       >
-      
+
       <q-input
         filled
         type="email"
@@ -69,7 +69,7 @@
         title="Create an ad"
         icon="add_comment"
       >
-      
+
       <q-input
         filled
         type="password"
@@ -122,14 +122,14 @@ export default {
             password: null,
             passwordConfirm: null,
             serverError: null
-        
+
         }
     },
   setup () {
     const $q = useQuasar()
 
     return {
-      
+
       step: ref(1),
       showNotifs (position, color, type, message) {
         $q.notify({

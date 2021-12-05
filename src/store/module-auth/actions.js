@@ -50,7 +50,7 @@ export default {
     async [SIGNUP_ACTION](context, payload) {
         return context.dispatch(AUTH_ACTION, {
             ...payload,
-            url: '/register'
+            url: '/user/register'
         });
     }
 }

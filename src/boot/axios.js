@@ -10,7 +10,7 @@ import store from 'src/store/index'
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({
-    baseURL: process.env.chatapp.API_URL,
+    baseURL: "https://7579-154-72-150-118.ngrok.io/api/v1",
     headers: {
         Accept: 'application/json'
     }
