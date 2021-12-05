@@ -22,7 +22,7 @@ module.exports = configure(function(ctx) {
         // --> boot files are part of "main.js"
         // https://quasar.dev/quasar-cli/boot-files
         boot: [
-            'axios', 'helper'
+            'axios', 'helper', 'laravel-echo'
         ],
 
         // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
@@ -83,7 +83,7 @@ module.exports = configure(function(ctx) {
         // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
         framework: {
             config: {
-              loading: { /* look at QuasarConfOptions from the API card */ }
+                loading: { /* look at QuasarConfOptions from the API card */ }
             },
 
             // iconSet: 'material-icons', // Quasar icon set

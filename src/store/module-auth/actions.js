@@ -29,10 +29,10 @@ export default {
             .then((response) => {
                 console.log(response);
                 let userData = {
-                    name: response.data.data.user.name,
+                    name: response.data.data.user.username,
                     user_id: response.data.data.user.id,
                     email: response.data.data.user.email,
-                    access_token: response.data.data.access_token,
+                    access_token: response.data.data.token,
                 }
                 localStorage.setItem('userData', JSON.stringify(userData));
                 context.commit(SET_USER_TOKEN_DATA_MUTATION, userData);
@@ -44,13 +44,13 @@ export default {
     async [LOGIN_ACTION](context, payload) {
         return context.dispatch(AUTH_ACTION, {
             ...payload,
-            url: 'authenticate'
+            url: 'login'
         })
     },
     async [SIGNUP_ACTION](context, payload) {
         return context.dispatch(AUTH_ACTION, {
             ...payload,
-            url: 'user/register'
+            url: 'register'
         });
     }
 }

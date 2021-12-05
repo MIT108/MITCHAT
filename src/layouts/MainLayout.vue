@@ -43,7 +43,7 @@ import {
     SessionStorage
 } from 'quasar'
 import { mapActions } from 'vuex'
-import { LOGOUT_ACTION } from 'src/store/storeConstants'
+import { LOGOUT_ACTION,USER_INFORMATION } from 'src/store/storeConstants'
 
 export default defineComponent({
     data() {
@@ -52,6 +52,7 @@ export default defineComponent({
             userName: null,
             userEmail: null,
             userImage: null,
+            userInfo:[]
         }
     },
     name: 'MainLayout',
@@ -63,8 +64,10 @@ export default defineComponent({
     },
 
     mounted() {
-
-        console.log(this.userName);
+        this.userInfo = this.$store.getters[`auth/${USER_INFORMATION}`];
+        this.userName = this.userInfo[0];
+        this.userId = this.userInfo[1];
+        console.log(this.userInfo,this.userName,this.userId);
         // if (value == "null") {
         //     console.log("pl")
         //     window.location.href = "/"
