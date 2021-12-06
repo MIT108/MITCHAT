@@ -7,7 +7,7 @@
                 <!--
                 <q-chat-message name="Jane" avatar="https://cdn.quasar.dev/img/avatar5.jpg" :text="['Did it work?']" stamp="1 minutes ago" size="8" text-color="white" bg-color="primary" />
 -->
-                <div v-if="messageLoad">
+                <div v-if="!messageLoad">
                     <div v-if="messages.length == 0">
                         <center style="margin-top: 10%;">
 
@@ -38,10 +38,10 @@
             </div>
             <q-footer elevated>
                 <q-toolbar>
-                    <q-input bg-color="white" class="full-width" @keydown.enter="saveMessage()" outlined rounded label="message" v-model.trim="message" dense>
+                    <q-input :disable="messageLoad" bg-color="white" class="full-width" @keydown.enter="saveMessage()" outlined rounded label="message" v-model.trim="message" dense>
 
                         <template v-slot:after>
-                            <q-btn round dense flat color="white" v-on:click="saveMessage()" icon="send" />
+                            <q-btn :disable="messageLoad"  round dense flat color="white" v-on:click="saveMessage()" icon="send" />
                         </template>
                     </q-input>
                 </q-toolbar>
@@ -78,18 +78,30 @@ import {
     USER_DATA_GETTER
 } from 'src/store/storeConstants';
 export default {
+    props: {
+        userId: String,
+        userName: String,
+        userImage: String,
+        userEmail: String,
+        index: String,
+    },
+    created() {},
+    components: {
+        EssentialLink,
+        spinner
+    },
     watch: {
         userId: function (va) {
             this.user = this.$store.getters[`auth/${USER_DATA_GETTER}`]
 
-            this.messageLoad = false
+            this.messageLoad = true
             this.$api
-                .get("collect_message/" + this.userId + "/" + this.user[0])
+                .get("collect_message/" + this.userId + "/" + 5)
                 .then(response => {
                     this.messages = response.data.data.data
                     console.log(this.messages);
                     // this.scrollToBottom()
-                    this.messageLoad = true
+                    this.messageLoad = false
                 })
                 .catch(error => {
                     console.log(error);
@@ -120,14 +132,14 @@ export default {
     methods: {
         loadMessage() {},
         messageName(sender) {
-            if (sender % 2 != 0) {
+            if (sender == this.user[0]) {
                 return "me"
             } else {
                 return this.userName
             }
         },
         checkDate(time) {
-          return ok;
+            return "ok";
             time = time.substr(0, 10);
             var n = time
             var now = new Date().toISOString().substr(0, 10)
@@ -199,7 +211,7 @@ export default {
             }
         },
         checkSender(sender) {
-            if (sender % 2 != 0) {
+            if (sender == this.user[0]) {
                 return true
             } else {
                 return false
@@ -207,7 +219,7 @@ export default {
 
         },
         messageColor(sender) {
-            if (sender % 2 != 0) {
+            if (sender == this.user[0]) {
                 return "primary"
             } else {
                 return
@@ -228,25 +240,28 @@ export default {
                 this.newMessage.receiver_id = this.userId;
                 this.newMessage.message = this.message;
                 var now = new Date();
-                console.log("sender id "+this.user[0]);
+                console.log("sender id " + this.user[0]);
                 this.newMessage.created_at = now;
-                this.messages.push(this.newMessage)
+                this.messages.push(this.cloneMessage(this.newMessage));
 
                 // this.messages.push(response.data.data[0])
                 console.log(this.messages);
 
-                // this.$api.post("message", {
-                //         sender_id: this.user[0],
-                //         receiver_id: this.userId,
-                //         message: this.message
-                //     })
-                //     .then(response => {
-                //         // JSON responses are automatically parsed
-                //         console.log(response.data.data);
-                // this.message = ""
-                //     })
+                var sendMessage = this.message
+                this.message = ""
 
-                var newMessage = [this.index, this.message]
+                this.$api.post("message", {
+                        sender_id: this.user[0],
+                        receiver_id: this.userId,
+                        message: sendMessage
+                    })
+                    .then(response => {
+                        // JSON responses are automatically parsed
+                        console.log(response.data.data);
+                        sendMessage = ""
+                    })
+
+                var newMessage = [this.index, sendMessage]
                 this.$emit("newMessage", newMessage)
             }
 
@@ -290,19 +305,15 @@ export default {
                     return "Dec"
                     break;
             }
+        },
+        cloneMessage(servermessage) {
+            var clone = {};
+            for (var key in servermessage) {
+                if (servermessage.hasOwnProperty(key)) //ensure not adding inherited props
+                    clone[key] = servermessage[key];
+            }
+            return clone;
         }
-    },
-    props: {
-        userId: String,
-        userName: String,
-        userImage: String,
-        userEmail: String,
-        index: String,
-    },
-    created() {},
-    components: {
-        EssentialLink,
-        spinner
     },
 };
 </script>
