@@ -71,24 +71,23 @@
 <script>
 import EssentialLink from "./EssentialLink.vue";
 import spinner from "./Spinner.vue";
-import axios from 'axios';
 import {
     date
 } from 'quasar'
 import {
     USER_DATA_GETTER
 } from 'src/store/storeConstants';
-import Vue from 'vue'
 export default {
     watch: {
         userId: function (va) {
             this.user = this.$store.getters[`auth/${USER_DATA_GETTER}`]
 
             this.messageLoad = false
-            axios
-                .get(process.env.chatapp.API_URL + "collect_message/" + this.userId + "/" + this.user[0])
+            this.$api
+                .get("collect_message/" + this.userId + "/" + this.user[0])
                 .then(response => {
-                    this.messages = response.data
+                    this.messages = response.data.data.data
+                    console.log(this.messages);
                     // this.scrollToBottom()
                     this.messageLoad = true
                 })
@@ -105,6 +104,12 @@ export default {
     data() {
         return {
             message: "",
+            newMessage: {
+                sender_id: null,
+                receiver_id: null,
+                message: null,
+                created_at: null,
+            },
             messages: [],
             messagesExist: false,
             messageLoad: false,
@@ -122,6 +127,7 @@ export default {
             }
         },
         checkDate(time) {
+          return ok;
             time = time.substr(0, 10);
             var n = time
             var now = new Date().toISOString().substr(0, 10)
@@ -213,17 +219,32 @@ export default {
                 alert("enter message")
 
             } else {
+                // var nmessage = [
+                // "sender_id"   this.user[0],
+                // "receiver_id"  this.userId,
+                // "message": this.message,
+                // "created_at": date.now() ]
+                this.newMessage.sender_id = this.user[0];
+                this.newMessage.receiver_id = this.userId;
+                this.newMessage.message = this.message;
+                var now = new Date();
+                console.log("sender id "+this.user[0]);
+                this.newMessage.created_at = now;
+                this.messages.push(this.newMessage)
 
-                axios.post(process.env.chatapp.API_URL + "message", {
-                        sender_id: this.userId,
-                        receiver_id: '1',
-                        message: this.message
-                    })
-                    .then(response => {
-                        // JSON responses are automatically parsed
-                        this.messages.push(response.data[0])
-                        this.message = ""
-                    })
+                // this.messages.push(response.data.data[0])
+                console.log(this.messages);
+
+                // this.$api.post("message", {
+                //         sender_id: this.user[0],
+                //         receiver_id: this.userId,
+                //         message: this.message
+                //     })
+                //     .then(response => {
+                //         // JSON responses are automatically parsed
+                //         console.log(response.data.data);
+                // this.message = ""
+                //     })
 
                 var newMessage = [this.index, this.message]
                 this.$emit("newMessage", newMessage)
@@ -231,7 +252,6 @@ export default {
 
         },
         getMonth(m) {
-            console.log(m);
             switch (m) {
                 case "01":
                     return "Jan"
