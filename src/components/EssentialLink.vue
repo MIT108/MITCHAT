@@ -1,66 +1,71 @@
 <template>
-    <div class="" style="max-width: 350px">
-        <q-toolbar class="bg-primary text-white shadow-2">
-            <q-toolbar-title>Contacts</q-toolbar-title>
-        </q-toolbar>
+<div class="" style="max-width: 350px">
+    <q-toolbar class="bg-primary text-white shadow-2">
+        <q-toolbar-title>Contacts</q-toolbar-title>
+    </q-toolbar>
 
-        <q-list v-if="userListLoading">
-            <q-item-label header>Recent contacts</q-item-label>
+    <q-list v-if="userListLoading">
+        <q-item-label header>Recent contacts</q-item-label>
 
-            <div v-for="(user, index) in userList" :key="index">
-                <q-separator />
-                <div v-if="index == active" style="background-color: rgba(0, 0, 0, 0.158);">
-                    <q-item class="q-mb-sm" clickable v-on:click="
+        <div v-for="(user, index) in userList" :key="index">
+            <div v-if="index == active" style="background-color: rgba(0, 0, 0, 0.158);">
+                <q-item class="q-mb-sm" clickable v-on:click="
                         sendResultValues(index, user.id, user.username, user.email, user.email)
                       " v-ripple>
-                        <q-item-section avatar>
-                            <q-avatar>
-                                <img src="/images/defaultUser.png" />
-                            </q-avatar>
-                        </q-item-section>
+                    <q-item-section avatar>
+                        <q-avatar>
+                            <img src="/images/defaultUser.png" />
+                        </q-avatar>
+                    </q-item-section>
 
-                        <q-item-section>
-                            <q-item-label>{{ user.username }}</q-item-label>
-                            <q-item-label caption lines="1">{{ user.email }}</q-item-label>
-                        </q-item-section>
+                    <q-item-section>
+                        <q-item-label>{{ user.username }}</q-item-label>
+                        <q-item-label caption lines="1">{{ user.email }}</q-item-label>
+                    </q-item-section>
 
-                        <q-item-section side>
-                            <q-icon name="chat_bubble" color="grey" />
-                        </q-item-section>
-                    </q-item>
-                </div>
-                <div v-if="index != active">
-                    <q-item class="q-mb-sm" clickable v-on:click="
-                        sendResultValues(index, user.id, user.username, user.email, user.email)
-                      " v-ripple>
-                        <q-item-section avatar>
-                            <q-avatar>
-                                <img src="/images/defaultUser.png" />
-                            </q-avatar>
-                        </q-item-section>
-
-                        <q-item-section>
-                            <q-item-label>{{ user.username }}</q-item-label>
-                            <q-item-label caption lines="1">{{ user.email }}</q-item-label>
-                        </q-item-section>
-
-                        <q-item-section side>
-                            <q-icon name="chat_bubble" color="grey" />
-                        </q-item-section>
-                    </q-item>
-                </div>
+                    <q-item-section side>
+                        <q-icon name="chat_bubble" color="grey" />
+                    </q-item-section>
+                </q-item>
             </div>
-            <q-separator />
+            <div v-if="index != active">
+                <q-item class="q-mb-sm" clickable v-on:click="
+                        sendResultValues(index, user.id, user.username, user.email, user.email)
+                      " v-ripple>
+                    <q-item-section avatar>
+                        <q-avatar>
+                            <img src="/images/defaultUser.png" />
+                        </q-avatar>
+                    </q-item-section>
 
-        </q-list>
+                    <q-item-section>
+                        <q-item-label>{{ user.username }}</q-item-label>
+                        <q-item-label caption lines="1">{{ user.email }}</q-item-label>
+                    </q-item-section>
 
-        <div v-else>
+                    <q-item-section side>
+                        <q-icon name="chat_bubble" color="grey" />
+                    </q-item-section>
+                </q-item>
+            </div>
+        </div>
+
+    </q-list>
+        <div v-if="true">
             <center>
-                <h6>Searching for users</h6>
-                <spinner />
+                <span style="color: gray; background-color: gray;  border-radius: 20px;">
+                    show more
+                </span>
             </center>
         </div>
+
+    <div v-if="!userListLoading">
+        <center>
+            <h6>Searching for users</h6>
+            <spinner />
+        </center>
     </div>
+</div>
 </template>
 
 <script>
@@ -74,7 +79,7 @@ import {
 
 export default {
     watch: {
-        newMessage: function() {
+        newMessage: function () {
             this.userList[this.newMessage[0]].email = "me: " + this.newMessage[1]
             this.userList.unshift(this.userList[this.newMessage[0]])
             this.userList.splice(this.newMessage[0] + 1, 1)
@@ -103,7 +108,7 @@ export default {
         };
     },
     methods: {
-        sendResultValues: function(index, id, name, email, image) {
+        sendResultValues: function (index, id, name, email, image) {
             console.log(index);
             this.userData.index = index;
             this.userData.id = id;
