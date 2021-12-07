@@ -15,9 +15,6 @@ export default defineComponent({
     })
   },
   created(){
-    this.$echo.channel('test').listen('event', payload => {
-          console.log('THIS IS THE PAYLOAD: ' + payload)
-       }),
       this.$store.dispatch(`auth/${AUTO_ACTION_LOGIN}`);
   },
   components:{

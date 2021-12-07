@@ -10,7 +10,7 @@ const echo = new Echo({
     cluster: "eu",
     forceTLS: true
 });
-
+console.log(echo);
 export default boot(({ app }) => {
     app.config.globalProperties.$echo = echo
 })

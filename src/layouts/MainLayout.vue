@@ -61,13 +61,18 @@ export default defineComponent({
     EssentialLink,
     Chat,
   },
-
+  created (){
+    
+  },
   mounted() {
     console.log(this.userName);
 
     //getting user data
     this.user = this.$store.getters[`auth/${USER_DATA_GETTER}`]
-    console.log(this.user)
+    console.log(this.user);
+    this.$echo.channel('NewMessgae').listen('message.'+this.user[0], payload => {
+          console.log('THIS IS THE PAYLOAD: ' + payload)
+       })
   },
 
   setup() {},
