@@ -40,7 +40,8 @@ import { USER_DATA_GETTER } from "../store/storeConstants";
 
 import { defineComponent, ref } from "vue";
 import { mapActions } from "vuex";
-import { LOGOUT_ACTION } from "src/store/storeConstants";
+import { LOGOUT_ACTION, GET_USER_TOKEN_GETTER } from "src/store/storeConstants";
+
 
 export default defineComponent({
   data() {
@@ -61,13 +62,20 @@ export default defineComponent({
     EssentialLink,
     Chat,
   },
-
+  created (){
+    
+  },
   mounted() {
     console.log(this.userName);
 
     //getting user data
     this.user = this.$store.getters[`auth/${USER_DATA_GETTER}`]
-    console.log(this.user)
+    const token = this.$store.getters[`auth/${GET_USER_TOKEN_GETTER}`];
+    this.$echo.connector.pusher.config.auth.headers['Authorization'] = `Bearer ${token}`;console.log(this.user[0]);
+    console.log(this.user);
+    this.$echo.private('messages.'+this.user[0]).listen('NewMessage', (payload) => {
+          console.log(payload);
+       })
   },
 
   setup() {},
