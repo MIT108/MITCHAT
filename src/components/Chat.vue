@@ -1,5 +1,8 @@
 <template>
-<div>
+
+
+
+<div class="back">
     <q-page-container v-if="userId != null">
 
         <div class="q-pa-md row justify-center">
@@ -7,6 +10,7 @@
                 <!--
                 <q-chat-message name="Jane" avatar="https://cdn.quasar.dev/img/avatar5.jpg" :text="['Did it work?']" stamp="1 minutes ago" size="8" text-color="white" bg-color="primary" />
 -->
+
                 <div v-if="!messageLoad">
                     <div v-if="messages.length == 0">
                         <center style="margin-top: 10%;">
@@ -96,7 +100,7 @@ export default {
 
             this.messageLoad = true
             this.$api
-                .get("collect_message/" + this.userId + "/" + 5)
+                .get("collect_message/" + this.userId + "/" + this.user[0])
                 .then(response => {
                     this.messages = response.data.data.data
                     console.log(this.messages);
@@ -317,3 +321,12 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+.back{
+    background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/1089577/background.png);
+    width: 100%;
+    overflow-y: auto;
+    height: 100vh;
+}
+</style>
