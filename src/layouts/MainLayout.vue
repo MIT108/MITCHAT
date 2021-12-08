@@ -40,7 +40,8 @@ import { USER_DATA_GETTER } from "../store/storeConstants";
 
 import { defineComponent, ref } from "vue";
 import { mapActions } from "vuex";
-import { LOGOUT_ACTION } from "src/store/storeConstants";
+import { LOGOUT_ACTION, GET_USER_TOKEN_GETTER } from "src/store/storeConstants";
+
 
 export default defineComponent({
   data() {
@@ -69,8 +70,10 @@ export default defineComponent({
 
     //getting user data
     this.user = this.$store.getters[`auth/${USER_DATA_GETTER}`]
+    const token = this.$store.getters[`auth/${GET_USER_TOKEN_GETTER}`];
+    this.$echo.connector.pusher.config.auth.headers['Authorization'] = `Bearer ${token}`;console.log(this.user[0]);
     console.log(this.user);
-    this.$echo.channel('NewMessgae').listen('message.'+this.user[0], payload => {
+    this.$echo.private('NewMessage').listen('.messages.'+this.user[0], payload => {
           console.log('THIS IS THE PAYLOAD: ' + payload)
        })
   },

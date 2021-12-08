@@ -1,8 +1,8 @@
 export default function() {
     return {
-        name: 'Miendjem thierry',
-        access_token: 'fasdfasdfasdfasdfasdfasdfasd',
+        name: '',
+        access_token: '',
         user_id: '1',
-        email: 'miendjem@gmail.com',
+        email: '',
     }
 }

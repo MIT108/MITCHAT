@@ -231,11 +231,6 @@ export default {
                 alert("enter message")
 
             } else {
-                // var nmessage = [
-                // "sender_id"   this.user[0],
-                // "receiver_id"  this.userId,
-                // "message": this.message,
-                // "created_at": date.now() ]
                 this.newMessage.sender_id = this.user[0];
                 this.newMessage.receiver_id = this.userId;
                 this.newMessage.message = this.message;
@@ -243,17 +238,14 @@ export default {
                 console.log("sender id " + this.user[0]);
                 this.newMessage.created_at = now;
                 this.messages.push(this.cloneMessage(this.newMessage));
-
-                // this.messages.push(response.data.data[0])
                 console.log(this.messages);
 
                 var sendMessage = this.message
                 this.message = ""
 
-                this.$api.post("message", {
-                        sender_id: this.user[0],
-                        receiver_id: this.userId,
-                        message: sendMessage
+                this.$api.post("send", {
+                        contact_id: this.userId,
+                        text: sendMessage
                     })
                     .then(response => {
                         // JSON responses are automatically parsed
