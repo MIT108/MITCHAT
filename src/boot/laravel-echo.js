@@ -11,7 +11,7 @@ const echo = new Echo({
     key: "cce61bed1cd09ff5e1a3",
     cluster: "eu",
     forceTLS: true,
-    authEndpoint: "https://laravel-vue-chat-api.herokuapp.com/broadcasting/auth"
+    authEndpoint: "https://laravel-vue-chat-api.herokuapp.com/api/broadcasting/auth"
 });
 console.log(echo);
 export default boot(({ app, store }) => {
