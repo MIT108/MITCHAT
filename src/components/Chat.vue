@@ -96,7 +96,7 @@ export default {
 
             this.messageLoad = true
             this.$api
-                .get("collect_message/" + this.userId + "/" + 5)
+                .get("collect_message/" + this.userId + "/" + this.user[0])
                 .then(response => {
                     this.messages = response.data.data.data
                     console.log(this.messages);
@@ -250,6 +250,7 @@ export default {
                     .then(response => {
                         // JSON responses are automatically parsed
                         console.log(response.data.data);
+                        console.log(response.data.message);
                         sendMessage = ""
                     })
 

@@ -74,7 +74,7 @@ export default defineComponent({
     this.$echo.connector.pusher.config.auth.headers['Authorization'] = `Bearer ${token}`;console.log(this.user[0]);
     console.log(this.user);
     this.$echo.private('messages.'+this.user[0]).listen('NewMessage', (payload) => {
-          console.log('THIS IS THE PAYLOAD: ' + payload);
+          console.log(payload);
        })
   },
 
