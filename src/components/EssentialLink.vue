@@ -1,5 +1,6 @@
 <template>
 <div class="" style="max-width: 350px">
+
     <q-toolbar class="bg-primary text-white shadow-2">
         <q-toolbar-title>Contacts</q-toolbar-title>
     </q-toolbar>
@@ -8,27 +9,7 @@
         <q-item-label header>Recent contacts</q-item-label>
 
         <div v-for="(user, index) in userList" :key="index">
-            <div v-if="index == active" style="background-color: rgba(0, 0, 0, 0.158);">
-                <q-item class="q-mb-sm" clickable v-on:click="
-                        sendResultValues(index, user.id, user.username, user.email, user.email)
-                      " v-ripple>
-                    <q-item-section avatar>
-                        <q-avatar>
-                            <img src="/images/defaultUser.png" />
-                        </q-avatar>
-                    </q-item-section>
-
-                    <q-item-section>
-                        <q-item-label>{{ user.username }}</q-item-label>
-                        <q-item-label caption lines="1">{{ user.email }}</q-item-label>
-                    </q-item-section>
-
-                    <q-item-section side>
-                        <q-icon name="chat_bubble" color="grey" />
-                    </q-item-section>
-                </q-item>
-            </div>
-            <div v-if="index != active">
+            <div>
                 <q-item class="q-mb-sm" clickable v-on:click="
                         sendResultValues(index, user.id, user.username, user.email, user.email)
                       " v-ripple>
@@ -49,15 +30,14 @@
                 </q-item>
             </div>
         </div>
-
     </q-list>
-        <div v-if="true">
-            <center>
-                <span style="color: gray; background-color: gray;  border-radius: 20px;">
-                    show more
-                </span>
-            </center>
-        </div>
+    <!--<div v-if="true">
+        <center>
+            <span style="color: black; background-color: rgba(128, 128, 128, 0.719);padding: 6px;cursor:pointer;  border-radius: 20px;">
+                show more
+            </span>
+        </center>
+    </div>-->
 
     <div v-if="!userListLoading">
         <center>
@@ -65,6 +45,7 @@
             <spinner />
         </center>
     </div>
+
 </div>
 </template>
 
@@ -74,20 +55,59 @@ import {
     useQuasar
 } from "quasar";
 
+import {
+    ref
+} from 'vue'
 // import defineAsyncComponent from 'quasar'
 // const Load = defineAsyncComponent(()=> import('../components/Loading'))
 
 export default {
-    watch: {
-        newMessage: function () {
-            this.userList[this.newMessage[0]].email = "me: " + this.newMessage[1]
-            this.userList.unshift(this.userList[this.newMessage[0]])
-            this.userList.splice(this.newMessage[0] + 1, 1)
+    setup() {
+        const items = ref([{}, {}, {}, {}, {}, {}, {}])
 
-            this.active = 0
+        return {
+            items,
+            onLoad(index, done) {
+                setTimeout(() => {
+                    items.value.push({}, {}, {}, {}, {}, {}, {})
+                    done()
+                }, 2000)
+            }
         }
     },
-    props: {
+    watch: {
+        newMessage: function () {
+            if (this.active == 1) {
+                console.log(this.newMessage);
+                if (this.newMessage[3] == null) {
+                    this.userList[this.newMessage[0]].email = this.newMessage[1]
+
+                } else {
+                    this.userList[this.newMessage[0]].email = "me : " + this.newMessage[1]
+                }
+                this.userList[this.newMessage[0]].username = this.newMessage[2]
+                console.log(this.newMessage);
+
+                this.userList.unshift(this.userList[this.newMessage[0]])
+                this.userList.splice(this.newMessage[0] + 1, 1)
+            } else {
+
+                this.user = this.$store.getters[`auth/${USER_DATA_GETTER}`]
+                const token = this.$store.getters[`auth/${GET_USER_TOKEN_GETTER}`];
+                this.$echo.connector.pusher.config.auth.headers['Authorization'] = `Bearer ${token}`;
+                this.$echo.private('messages.' + this.user[0]).listen('NewMessage', (payload) => {
+                      this.userList[100].email = payload.message.message
+
+                    this.userList[100].username = payload.message.sender
+                    this.userList.unshift(this.userList[100])
+                    this.userList.splice(100 + 1, 1)
+
+                })
+
+        }
+    }
+},
+props: {
         newMessage: [],
     },
     components: {
@@ -103,7 +123,7 @@ export default {
                 image: null,
             },
             userList: null,
-            active: null,
+            active: 0,
             userListLoading: false,
         };
     },
@@ -115,7 +135,7 @@ export default {
             this.userData.email = email;
             this.userData.name = name;
             this.userData.image = image;
-            this.active = index
+            this.active = 1
 
             this.$emit("userData", this.userData);
         },
@@ -123,22 +143,23 @@ export default {
             console.log(this.userList);
         },
     },
-    setup() {},
     async mounted() {
-        const $q = useQuasar();
+            const $q = useQuasar();
 
-        await this.$api.get("list")
-            .then((response) => {
-                $q.loading.hide();
-                console.log("ok")
-                this.userList = response.data.data.data;
-                // this.userList = JSON.stringify(this.userList)
-                this.userListLoading = true;
-            })
-            .catch((error) => {
-                console.log(error);
-                // this.errored = true
-            });
-    },
+            await this.$api.get("list")
+                .then((response) => {
+                    $q.loading.hide();
+                    console.log("ok")
+                    this.userList = response.data.data;
+                    console.log(response.data.data);
+                    // this.userList = JSON.stringify(this.userList)
+                    this.userListLoading = true;
+                })
+                .catch((error) => {
+                    console.log(error);
+                    // this.errored = true
+                });
+        },
+
 };
 </script>
