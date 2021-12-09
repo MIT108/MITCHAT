@@ -77,14 +77,37 @@ export default {
     },
     watch: {
         newMessage: function () {
-            this.userList[this.newMessage[0]].email = "me: " + this.newMessage[1]
-            this.userList.unshift(this.userList[this.newMessage[0]])
-            this.userList.splice(this.newMessage[0] + 1, 1)
+            if (this.active == 1) {
+                console.log(this.newMessage);
+                if (this.newMessage[3] == null) {
+                    this.userList[this.newMessage[0]].email = this.newMessage[1]
 
-            this.active = 0
+                } else {
+                    this.userList[this.newMessage[0]].email = "me : " + this.newMessage[1]
+                }
+                this.userList[this.newMessage[0]].username = this.newMessage[2]
+                console.log(this.newMessage);
+
+                this.userList.unshift(this.userList[this.newMessage[0]])
+                this.userList.splice(this.newMessage[0] + 1, 1)
+            } else {
+
+                this.user = this.$store.getters[`auth/${USER_DATA_GETTER}`]
+                const token = this.$store.getters[`auth/${GET_USER_TOKEN_GETTER}`];
+                this.$echo.connector.pusher.config.auth.headers['Authorization'] = `Bearer ${token}`;
+                this.$echo.private('messages.' + this.user[0]).listen('NewMessage', (payload) => {
+                      this.userList[100].email = payload.message.message
+
+                    this.userList[100].username = payload.message.sender
+                    this.userList.unshift(this.userList[100])
+                    this.userList.splice(100 + 1, 1)
+
+                })
+
         }
-    },
-    props: {
+    }
+},
+props: {
         newMessage: [],
     },
     components: {
@@ -100,7 +123,7 @@ export default {
                 image: null,
             },
             userList: null,
-            active: null,
+            active: 0,
             userListLoading: false,
         };
     },
@@ -112,7 +135,7 @@ export default {
             this.userData.email = email;
             this.userData.name = name;
             this.userData.image = image;
-            this.active = index
+            this.active = 1
 
             this.$emit("userData", this.userData);
         },
@@ -121,21 +144,22 @@ export default {
         },
     },
     async mounted() {
-        const $q = useQuasar();
+            const $q = useQuasar();
 
-        await this.$api.get("list")
-            .then((response) => {
-                $q.loading.hide();
-                console.log("ok")
-                this.userList = response.data.data.data;
-                // this.userList = JSON.stringify(this.userList)
-                this.userListLoading = true;
-            })
-            .catch((error) => {
-                console.log(error);
-                // this.errored = true
-            });
-    },
+            await this.$api.get("list")
+                .then((response) => {
+                    $q.loading.hide();
+                    console.log("ok")
+                    this.userList = response.data.data;
+                    console.log(response.data.data);
+                    // this.userList = JSON.stringify(this.userList)
+                    this.userListLoading = true;
+                })
+                .catch((error) => {
+                    console.log(error);
+                    // this.errored = true
+                });
+        },
 
 };
 </script>

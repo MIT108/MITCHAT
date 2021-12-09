@@ -6,7 +6,7 @@
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title>
-          <div v-if="userName == null">MIT-Max Chatting Appication</div>
+          <div v-if="userName == null">MIT-Max Chatting Application</div>
           <div v-else>
             {{ userName }}
           </div>
@@ -63,19 +63,19 @@ export default defineComponent({
     Chat,
   },
   created (){
-    
+
   },
   mounted() {
     console.log(this.userName);
 
     //getting user data
-    this.user = this.$store.getters[`auth/${USER_DATA_GETTER}`]
-    const token = this.$store.getters[`auth/${GET_USER_TOKEN_GETTER}`];
-    this.$echo.connector.pusher.config.auth.headers['Authorization'] = `Bearer ${token}`;console.log(this.user[0]);
-    console.log(this.user);
-    this.$echo.private('messages.'+this.user[0]).listen('NewMessage', (payload) => {
-          console.log(payload);
-       })
+    // this.user = this.$store.getters[`auth/${USER_DATA_GETTER}`]
+    // const token = this.$store.getters[`auth/${GET_USER_TOKEN_GETTER}`];
+    // this.$echo.connector.pusher.config.auth.headers['Authorization'] = `Bearer ${token}`;console.log(this.user[0]);
+    // console.log(this.user);
+    // this.$echo.private('messages.'+this.user[0]).listen('NewMessage', (payload) => {
+    //       console.log(payload);
+    //    })
   },
 
   setup() {},

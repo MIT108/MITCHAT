@@ -1,7 +1,4 @@
 <template>
-
-
-
 <div class="back">
     <q-page-container v-if="userId != null">
 
@@ -24,13 +21,8 @@
                     <div v-else ref="feed" id="feed">
                         <div v-for="msg in messages" :key="msg.id" class="caption q-py-sm">
 
-                            <q-chat-message push :name="msg.username" :label="checkDate(msg.created_at)" avatar='/images/defaultUser.png' :sent="checkSender(msg.sender_id)" :text="[msg.message]" :stamp="sendTime(msg.created_at)" text-color="white" :bg-color="messageColor(msg.sender_id)" /> <img alt="" srcset="">
+                            <q-chat-message :name="msg.username" :label="checkDate(msg.created_at)" avatar='/images/defaultUser.png' :sent="checkSender(msg.sender_id)" :text="[msg.message]" :stamp="sendTime(msg.created_at)" text-color="white" :bg-color="messageColor(msg.sender_id)" /> <img alt="" srcset="">
 
-                            <q-popup-proxy>
-                                <q-banner>
-                                    You have lost connection to the internet. This app is offline.
-                                </q-banner>
-                            </q-popup-proxy>
                         </div>
                     </div>
                 </div>
@@ -45,7 +37,7 @@
                     <q-input :disable="messageLoad" bg-color="white" class="full-width" @keydown.enter="saveMessage()" outlined rounded label="message" v-model.trim="message" dense>
 
                         <template v-slot:after>
-                            <q-btn :disable="messageLoad"  round dense flat color="white" v-on:click="saveMessage()" icon="send" />
+                            <q-btn :disable="messageLoad" round dense flat color="white" v-on:click="saveMessage()" icon="send" />
                         </template>
                     </q-input>
                 </q-toolbar>
@@ -79,9 +71,33 @@ import {
     date
 } from 'quasar'
 import {
-    USER_DATA_GETTER
+    USER_DATA_GETTER,
+    GET_USER_TOKEN_GETTER
 } from 'src/store/storeConstants';
 export default {
+    mounted() {
+
+        this.user = this.$store.getters[`auth/${USER_DATA_GETTER}`]
+        const token = this.$store.getters[`auth/${GET_USER_TOKEN_GETTER}`];
+        this.$echo.connector.pusher.config.auth.headers['Authorization'] = `Bearer ${token}`;
+        console.log(this.user[0]);
+        console.log(this.user);
+        this.$echo.private('messages.' + this.user[0]).listen('NewMessage', (payload) => {
+
+            console.log(payload.message);
+
+            // this.messages.push(this.cloneMessage(payload.message));
+
+            if (payload.message.sender_id == this.userId) {
+                this.messages.push(this.cloneMessage(payload.message));
+            }
+            var newMessage = [this.index, payload.message.message, payload.message.sender, null]
+            this.$emit("newMessage", newMessage)
+
+        })
+
+    },
+
     props: {
         userId: String,
         userName: String,
@@ -235,30 +251,36 @@ export default {
                 alert("enter message")
 
             } else {
+                var currentdate = new Date();
+                var datetime = currentdate.getFullYear() + "-" +
+                    (currentdate.getMonth() + 1) + "-" +
+                    currentdate.getDate() + " " +
+                    currentdate.getHours() + ":" +
+                    currentdate.getMinutes() + ":" +
+                    currentdate.getSeconds();
                 this.newMessage.sender_id = this.user[0];
                 this.newMessage.receiver_id = this.userId;
                 this.newMessage.message = this.message;
-                var now = new Date();
-                console.log("sender id " + this.user[0]);
-                this.newMessage.created_at = now;
+                this.newMessage.created_at = datetime;
                 this.messages.push(this.cloneMessage(this.newMessage));
-                console.log(this.messages);
 
                 var sendMessage = this.message
                 this.message = ""
+                console.log(this.messages);
 
                 this.$api.post("send", {
                         contact_id: this.userId,
                         text: sendMessage
                     })
                     .then(response => {
-                        // JSON responses are automatically parsed
-                        console.log(response.data.data);
-                        console.log(response.data.message);
+                        // // JSON responses are automatically parsed
+                        // this.messages.push(response.data.message[0])
+                        // // console.log(response.data.data);
+                        // console.log(response.data.message[0]);
                         sendMessage = ""
                     })
 
-                var newMessage = [this.index, sendMessage]
+                var newMessage = [this.index, sendMessage, null, "me"]
                 this.$emit("newMessage", newMessage)
             }
 
@@ -316,7 +338,7 @@ export default {
 </script>
 
 <style scoped>
-.back{
+.back {
     background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/1089577/background.png);
     width: 100%;
     overflow-y: auto;
