@@ -118,7 +118,7 @@ export default {
             this.$api
                 .get("collect_message/" + this.userId + "/" + this.user[0])
                 .then(response => {
-                    this.messages = response.data.data.data
+                    this.messages = response.data.data
                     console.log(this.messages);
                     // this.scrollToBottom()
                     this.messageLoad = false
@@ -126,6 +126,8 @@ export default {
                 .catch(error => {
                     console.log(error);
                 })
+            // const height = document.getElementById('feed').offsetHeight
+            // console.log(height)
         },
         messages: function () {
             // this.scrollToBottom()
@@ -159,7 +161,6 @@ export default {
             }
         },
         checkDate(time) {
-            return "ok";
             time = time.substr(0, 10);
             var n = time
             var now = new Date().toISOString().substr(0, 10)
