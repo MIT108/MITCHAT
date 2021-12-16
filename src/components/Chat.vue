@@ -80,8 +80,6 @@ export default {
         this.user = this.$store.getters[`auth/${USER_DATA_GETTER}`]
         const token = this.$store.getters[`auth/${GET_USER_TOKEN_GETTER}`];
         this.$echo.connector.pusher.config.auth.headers['Authorization'] = `Bearer ${token}`;
-        console.log(this.user[0]);
-        console.log(this.user);
         this.$echo.private('messages.' + this.user[0]).listen('NewMessage', (payload) => {
 
             console.log(payload.message);
@@ -95,6 +93,11 @@ export default {
             this.$emit("newMessage", newMessage)
 
         })
+
+        // this.$echo.private(`chat.${this.user[0]}`)
+        //     .listenForWhisper('typing', (e) => {
+        //       console.log("meindjem thieery")
+        //     });
 
     },
 
@@ -111,6 +114,14 @@ export default {
         spinner
     },
     watch: {
+        message: function () {
+            // const token = this.$store.getters[`auth/${GET_USER_TOKEN_GETTER}`];
+            // this.$echo.connector.pusher.config.auth.headers['Authorization'] = `Bearer ${token}`;
+            // this.$echo.private(`chat.${this.userId}`)
+            //     .whisper('typing', {
+            //         name: this.userId
+            //     });
+        },
         userId: function (va) {
             this.user = this.$store.getters[`auth/${USER_DATA_GETTER}`]
 
