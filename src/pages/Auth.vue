@@ -16,16 +16,16 @@
     <div>
 
     </div>
-    
+
   </div>
   <center>
-    <div style="width: 50%" v-if="this.Page == 'Login'">
+    <div style="" v-if="this.Page == 'Login'">
         <Login :Page="Page" />
     </div>
-    <div style="width: 50%" v-if="this.Page == 'Register'">
+    <div style="" v-if="this.Page == 'Register'">
         <Register :Page="Page" />
     </div>
-    <div style="width: 50%" v-if="this.Page == 'Forget'">
+    <div style="" v-if="this.Page == 'Forget'">
         <Register :Page="Page" />
     </div>
   </center>

@@ -21,6 +21,7 @@
         "quasar": "^2.0.0",
         "save-dev": "0.0.1-security",
         "socket.io-client": "^2.2.0",
+        "vuejs-datatable": "^2.0.0-alpha.7",
         "vuex": "^4.0.1"
     },
     "devDependencies": {
